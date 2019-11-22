@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+.idea
+.vscode
+_book
+_book.pdf
+yarn.lock
+*.log

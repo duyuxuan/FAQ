@@ -1,0 +1,20 @@
+{
+  "name": "emqx-faq",
+  "version": "1.0.0",
+  "description": "EMQ X FAQ",
+  "main": "index.js",
+  "author": "emqx team",
+  "license": "Apache 2.0",
+  "private": true,
+  "scripts": {
+    "prestart": "node _utils/prebuild.js",
+    "serve": "npm run prestart && gitbook serve",
+    "docs": "npm run prestart && gitbook install && gitbook serve",
+    "html": "npm run prestart && gitbook install && gitbook build . _book",
+    "pdf": "npm run prestart && gitbook install && gitbook pdf . _book.pdf",
+    "editor": "npx vue serve App.vue"
+  },
+  "dependencies": {
+    "gitbook-cli": "^2.3.2"
+  }
+}
