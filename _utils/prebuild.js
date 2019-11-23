@@ -2,18 +2,18 @@ const fs = require("fs");
 const path = require("path");
 
 const enMeta = {
-  datasource: require("../datasource/faq_en.json"),
-  summary: path.join(__dirname, "../en/SUMMARY.md"),
-  readme: path.join(__dirname, "../en/README.md"),
-  tags: path.join(__dirname, "../en/tags.md"),
+  datasource: require("../datasource/faq_en_US.json"),
+  summary: path.join(__dirname, "../en_US/SUMMARY.md"),
+  readme: path.join(__dirname, "../en_US/README.md"),
+  tags: path.join(__dirname, "../en_US/tags.md"),
   tagsName: "Tags"
 };
 
 const zhMeta = {
-  datasource: require("../datasource/faq_zh.json"),
-  summary: path.join(__dirname, "../zh_hans/SUMMARY.md"),
-  readme: path.join(__dirname, "../zh_hans/README.md"),
-  tags: path.join(__dirname, "../zh_hans/tags.md"),
+  datasource: require("../datasource/faq_zh_CN.json"),
+  summary: path.join(__dirname, "../zh_CN/SUMMARY.md"),
+  readme: path.join(__dirname, "../zh_CN/README.md"),
+  tags: path.join(__dirname, "../zh_CN/tags.md"),
   tagsName: "标签"
 };
 
