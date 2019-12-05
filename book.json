@@ -8,9 +8,24 @@
     "copy-code-button",
     "anchor-navigation-ex",
     "cuav-chapters",
-    "local-pagefooter"
+    "local-pagefooter",
+    "github-buttons",
+    "edit-link"
   ],
   "pluginsConfig": {
+    "github-buttons": {
+      "buttons": [{
+        "user": "emqx",
+        "repo": "emqx",
+        "type": "star",
+        "count": true,
+        "size": "small"
+      }]
+    },
+    "edit-link": {
+      "base": "https://github.com/emqx/FAQ/edit/master",
+      "label": "Edit This Page"
+    },
     "anchor-navigation-ex": {
       "showLevel": false
     },
