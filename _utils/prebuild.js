@@ -1,10 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
+const categoryPathMap = require("../datasource/category_map.json");
+
 const enMeta = {
   datasource: require("../datasource/faq_en_US.json"),
   summary: path.join(__dirname, "../en_US/SUMMARY.md"),
   readme: path.join(__dirname, "../en_US/README.md"),
+  base: path.join(__dirname, "../en_US"),
   tags: path.join(__dirname, "../en_US/tags.md"),
   tagsName: "Tags"
 };
@@ -13,6 +16,7 @@ const zhMeta = {
   datasource: require("../datasource/faq_zh_CN.json"),
   summary: path.join(__dirname, "../zh_CN/SUMMARY.md"),
   readme: path.join(__dirname, "../zh_CN/README.md"),
+  base: path.join(__dirname, "../zh_CN"),
   tags: path.join(__dirname, "../zh_CN/tags.md"),
   tagsName: "标签"
 };
@@ -26,7 +30,7 @@ function formatHashPath(hashPath = "") {
 
 function start(data = {}) {
   data.dataMap = {};
-  console.log(`发现 ${data.datasource.length} 个问题`);
+  console.log(`Find ${data.datasource.length} FAQ`);
   // 按照 summary 来索引
   data.datasource.forEach(item => {
     data.dataMap[item.category] = data.dataMap[item.category] || [];
@@ -44,10 +48,16 @@ function start(data = {}) {
     : category.unshift("Introduction");
   category = [...new Set(category)];
   const summary = ["# Summary", ""];
-  console.log(`发现 ${category.length} 个主题`);
+  console.log(`Find ${category.length} Topics`);
   // 开始处理
   category.forEach((item, i) => {
-    summary.push(`* [${item}](README.md#${formatHashPath(item)})`);
+    const categoryPath = categoryPathMap[item];
+    if (!categoryPath) {
+      throw new Error(item + " no category path");
+    }
+    summary.push(
+      `* [${item}](${categoryPath || `README.md#${formatHashPath(item)}`})`
+    );
   });
   summary.push(`* [${data.tagsName}](tags.md)`);
   // 写入 summary
@@ -62,7 +72,7 @@ function start(data = {}) {
     // 每个 tag 里包含多少主题
     item.tag.forEach(tag => {
       tagsMap[tag] = tagsMap[item.tag] || [];
-      tagsMap[tag].push(item.title);
+      tagsMap[tag].push(item);
     });
   });
   tags = [...new Set(tags)];
@@ -70,16 +80,24 @@ function start(data = {}) {
 
   const tagContent = [`# ${data.tagsName}`, "", ""];
   tags.forEach((tag, i) => {
-    const titles = tagsMap[tag];
-    if (titles.length > 0) {
+    const tagItems = tagsMap[tag];
+    if (tagItems.length > 0) {
       if (i !== 0) {
         tagContent.push("", "", "");
       }
 
       tagContent.push(`### ${tag}`, "");
       tagContent.push(
-        titles
-          .map(title => `- [${title}](README.md#${formatHashPath(title)})`)
+        tagItems
+          .map(item => {
+            const categoryPath = categoryPathMap[item.category] || "README.md";
+            if (!categoryPath) {
+              throw new Error(categoryPath + "no category path");
+            }
+            return `- [${item.title}](${categoryPath}#${formatHashPath(
+              item.title
+            )})`;
+          })
           .join("\n")
       );
     }
@@ -88,33 +106,40 @@ function start(data = {}) {
 
   // content
   // 写入 README.md
-  const readme = [];
+  const contents = {};
   category.forEach((item, i) => {
-    if (i !== 0) {
-      readme.push("", "<hr>", "", "", "");
-    }
-    readme.push(`# ${item}`);
+    const categoryContent = contents[item] || [];
+    categoryContent.push(`# ${item}`);
 
     data.dataMap[item].forEach((item2, j) => {
       if (j !== 0) {
-        readme.push("", "", "", "");
+        categoryContent.push("", "", "", "");
       }
       // 标题
-      readme.push(`### ${item2.title}`);
+      categoryContent.push(`### ${item2.title}`);
       // tags
       if (item2.tag && item2.tag.length > 0) {
-        readme.push(
+        categoryContent.push(
           "",
           `**${data.tagsName}:** ${item2.tag
             .map(tag => `[*${tag}*](tags.md#${formatHashPath(tag)})`)
             .join("  ")}`
         );
       }
-      // content
-      readme.push("", "", item2.content);
+      categoryContent.push("", "", item2.content);
+      contents[item] = categoryContent;
     });
   });
-  fs.writeFileSync(data.readme, readme.join("\n"));
+  Object.entries(contents).forEach(item => {
+    const [category, content] = item;
+    const contentFile = categoryPathMap[category];
+    if (!contentFile) {
+      throw new Error(category + " no content path");
+    }
+    fs.writeFileSync(path.join(data.base, contentFile), content.join("\n"));
+    console.log(contentFile);
+  });
+  // fs.writeFileSync(data.readme, readme.join("\n"));
 }
 
 console.log("中文 FAQ:");
