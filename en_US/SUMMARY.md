@@ -1,8 +1,8 @@
 # Summary
 
-* [Introduction](README.md#introduction)
-* [Use Guide](README.md#use-guide)
-* [Deployment](README.md#deployment)
-* [Enterprise Service](README.md#enterprise-service)
-* [Errors](README.md#errors)
+* [Introduction](README.md)
+* [Use Guide](use_guide.md)
+* [Deployment](deployment.md)
+* [Enterprise Service](enterprise_service.md)
+* [Errors](errors.md)
 * [Tags](tags.md)
